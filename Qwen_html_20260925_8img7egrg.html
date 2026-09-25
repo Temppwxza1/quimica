@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ===== TÍTULO DE LA PÁGINA CON LA ATRIBUCIÓN DEL GRUPO Y EL CONTEXTO ===== -->
+<title>Tabla periódica interactiva · Grupo Trikeros — UNMSM · FISI | Química · Semana 4</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --panel:#ffffff; --ink:#1d2330; --muted:#6b7280;
+    --line:#e3e7ef; --accent:#2563eb; --sel:#0f172a;
+    /* categorías: fondo / borde / texto */
+    --a-bg:#ffd2cf; --a-bd:#e07a6f; --a-tx:#7a2018;
+    --e-bg:#ffe0cc; --e-bd:#e08a4c; --e-tx:#6b3400;
+    --t-bg:#cfe3ff; --t-bd:#5b8fd6; --t-tx:#143b6b;
+    --p-bg:#cdece6; --p-bd:#4fb3a3; --p-tx:#0f4d45;
+    --m-bg:#e3d4f0; --p2:#9b6fc4; --m-tx:#43206b;
+    --n-bg:#d8f0c8; --n-bd:#7cb342; --n-tx:#2c4d12;
+    --h-bg:#ffd9ec; --h-bd:#d6569a; --h-tx:#6b1147;
+    --g-bg:#d9f6ff; --g-bd:#2bb3d6; --g-tx:#06485a;
+    --l-bg:#f3d9ff; --l-bd:#b06fd0; --l-tx:#4a1166;
+    --c-bg:#ffd9d9; --c-bd:#d06f6f; --c-tx:#661111;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Inter,system-ui,-apple-system,Roboto,Arial,sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.45}
+
+  /* ================= FRANJA INSTITUCIONAL (CABECERA OSCURA) ================= */
+  /* Oscura a propósito: el logo de FISI trae texto BLANCO y solo se lee sobre fondo oscuro. */
+  .brandbar{background:linear-gradient(180deg,#0e1a33,#15294d);
+            border-bottom:3px solid #f4c430;            /* filete dorado = guiño al escudo */
+            box-shadow:0 2px 10px rgba(8,15,30,.25)}
+  .brandbar .inner{max-width:1280px;margin:0 auto;padding:12px 20px;
+                   display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+
+  /* Medallón blanco que contiene el escudo GIF (robusto ante fondo transparente o blanco) */
+  .crest-wrap{flex:0 0 auto;width:68px;height:68px;border-radius:50%;background:#ffffff;
+              display:grid;place-items:center;padding:5px;
+              box-shadow:0 0 0 2px rgba(244,196,48,.55),0 2px 6px rgba(0,0,0,.35)}
+  .crest{width:100%;height:100%;object-fit:contain;display:block}
+
+  /* Logo horizontal de FISI (240x105) sobre el fondo oscuro -> texto blanco legible */
+  .fisi-img{height:54px;width:auto;aspect-ratio:240/105;display:block;flex:0 0 auto}
+
+  .vsep{width:1px;height:46px;background:rgba(255,255,255,.18);flex:0 0 auto}
+
+  .brandbar .txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .brandbar .uni{font-weight:800;font-size:1rem;letter-spacing:.2px;color:#f4f7ff;line-height:1.2}
+  .brandbar .tag{font-size:.74rem;color:#9fb3d6;font-weight:600}
+
+  .brandbar .spacer{flex:1 1 auto}
+  .brandbar .group{text-align:right;display:flex;flex-direction:column;gap:2px}
+  .brandbar .group .g-name{font-weight:800;font-size:1.2rem;color:#ffd27a;letter-spacing:.3px} /* dorado */
+  .brandbar .group .g-sub{font-size:.78rem;color:#cdd9ef;font-weight:600}
+
+  @media (max-width:760px){
+    .brandbar .vsep,.brandbar .spacer{display:none}
+    .brandbar .group{text-align:left;width:100%;
+                     border-top:1px solid rgba(255,255,255,.12);padding-top:8px}
+  }
+  @media (max-width:430px){
+    .crest-wrap{width:56px;height:56px}
+    .fisi-img{height:44px}
+    .brandbar .uni{font-size:.9rem}
+  }
+
+  header{max-width:1280px;margin:0 auto;padding:22px 20px 6px}
+  h1{margin:0;font-size:clamp(1.5rem,3vw,2.2rem);letter-spacing:-.5px}
+  header p{margin:6px 0 0;color:var(--muted);max-width:70ch}
+
+  /* ---- controles ---- */
+  .controls{max-width:1280px;margin:18px auto 0;padding:0 20px;
+            display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+  .field{display:flex;align-items:center;gap:10px;background:var(--panel);
+         border:1px solid var(--line);border-radius:14px;padding:8px 12px;
+         box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .field label{font-weight:600;font-size:.9rem}
+  .field input{width:90px;font-size:1.25rem;font-weight:700;text-align:center;
+               border:1px solid var(--line);border-radius:10px;padding:6px 8px;outline:none}
+  .field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.18)}
+  button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--panel);
+         border-radius:10px;padding:8px 14px;font-weight:600;transition:.15s}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{padding:5px 11px;border-radius:999px;font-size:.82rem;background:#eef2ff;
+        border:1px solid #dbe2ff;color:#3730a3}
+  .chip:hover{background:#e0e7ff}
+  .warn{color:#b91c1c;font-weight:600;font-size:.9rem;min-height:1.2em}
+
+  /* ---- ficha de información ---- */
+  .info{max-width:1280px;margin:14px auto 0;padding:0 20px}
+  .card{display:flex;gap:18px;align-items:center;background:var(--panel);
+        border:1px solid var(--line);border-radius:16px;padding:16px 18px;
+        box-shadow:0 1px 3px rgba(16,24,40,.06);min-height:96px}
+  .card .sym{flex:0 0 auto;width:84px;height:84px;border-radius:14px;display:grid;
+             place-items:center;border:2px solid var(--line);background:#f8fafc;position:relative}
+  .card .sym b{font-size:1.9rem;line-height:1}
+  .card .sym small{position:absolute;top:5px;left:8px;font-size:.72rem;font-weight:700;color:var(--muted)}
+  .card .meta{flex:1 1 auto}
+  .card .meta h2{margin:0;font-size:1.3rem}
+  .card .meta .pos{margin:4px 0 0;color:var(--muted);font-size:.95rem}
+  .card .meta .pos b{color:var(--ink)}
+  .badge{display:inline-flex;align-items:center;gap:7px;margin-top:8px;font-size:.82rem;
+         font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid}
+  .badge i{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .empty{color:var(--muted);font-style:italic}
+
+  /* ---- leyenda ---- */
+  .legend{max-width:1280px;margin:14px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:8px}
+  .legend span{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;
+               padding:4px 9px;border-radius:8px;border:1px solid var(--line);background:var(--panel)}
+  .legend i{width:12px;height:12px;border-radius:4px;display:inline-block;border:1px solid rgba(0,0,0,.12)}
+
+  /* ---- tabla ---- */
+  .tablewrap{max-width:1280px;margin:16px auto 40px;padding:0 20px;overflow-x:auto}
+  .ptable{display:grid;gap:4px;min-width:1080px;
+          grid-template-columns:34px repeat(18,minmax(46px,1fr));
+          grid-template-rows:24px repeat(7,minmax(58px,auto)) 16px repeat(2,minmax(58px,auto));}
+  .axis{display:grid;place-items:center;font-size:.72rem;font-weight:700;color:var(--muted);
+        user-select:none}
+  .axis.f{font-style:italic}
+  .cell{position:relative;border:1px solid;border-radius:9px;padding:4px 5px;cursor:pointer;
+        display:flex;flex-direction:column;justify-content:space-between;min-height:54px;
+        font:inherit;text-align:left;transition:transform .12s,box-shadow .12s,opacity .2s}
+  .cell .z{font-size:.66rem;font-weight:700;opacity:.75}
+  .cell .s{font-size:1.05rem;font-weight:800;line-height:1}
+  .cell .n{font-size:.58rem;font-weight:600;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cell:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(16,24,40,.15);z-index:5}
+  .marker{display:grid;place-items:center;border:1px dashed var(--muted);border-radius:9px;
+          font-size:.62rem;font-weight:700;color:var(--muted);background:repeating-linear-gradient(45deg,#fff,#fff 4px,#f3f4f6 4px,#f3f4f6 8px)}
+
+  .cat-a{background:var(--a-bg);border-color:var(--a-bd);color:var(--a-tx)}
+  .cat-e{background:var(--e-bg);border-color:var(--e-bd);color:var(--e-tx)}
+  .cat-t{background:var(--t-bg);border-color:var(--t-bd);color:var(--t-tx)}
+  .cat-p{background:var(--p-bg);border-color:var(--p-bd);color:var(--p-tx)}
+  .cat-m{background:var(--m-bg);border-color:var(--p2);color:var(--m-tx)}
+  .cat-n{background:var(--n-bg);border-color:var(--n-bd);color:var(--n-tx)}
+  .cat-h{background:var(--h-bg);border-color:var(--h-bd);color:var(--h-tx)}
+  .cat-g{background:var(--g-bg);border-color:var(--g-bd);color:var(--g-tx)}
+  .cat-l{background:var(--l-bg);border-color:var(--l-bd);color:var(--l-tx)}
+  .cat-c{background:var(--c-bg);border-color:var(--c-bd);color:var(--c-tx)}
+
+  .ptable.focused .cell:not(.sel){opacity:.32}
+  .cell.rowhl:not(.sel),.cell.colhl:not(.sel){opacity:.6}
+  .cell.rowhl,.cell.colhl{box-shadow:inset 0 0 0 2px rgba(37,99,235,.35)}
+  .cell.sel{opacity:1!important;z-index:9;transform:scale(1.12);
+            border-color:var(--sel)!important;
+            box-shadow:0 0 0 3px #fff,0 0 0 5px var(--sel),0 10px 22px rgba(15,23,42,.35);
+            animation:pop .35s ease}
+  @keyframes pop{0%{transform:scale(.85)}60%{transform:scale(1.2)}100%{transform:scale(1.12)}}
+
+  /* ================= PIE DE PÁGINA / CRÉDITOS ================= */
+  .credits{max-width:1280px;margin:0 auto;padding:22px 20px 36px}
+  .credits .box{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+                padding:18px 20px;display:flex;flex-wrap:wrap;gap:18px 28px;align-items:flex-start;
+                box-shadow:0 1px 3px rgba(16,24,40,.05)}
+  .credits .col{display:flex;flex-direction:column;gap:3px;min-width:160px}
+  .credits .k{font-size:.7rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:700}
+  .credits .v{font-size:.95rem;font-weight:600;color:var(--ink)}
+  .credits .v.big{font-size:1.15rem;color:var(--accent);font-weight:800}
+  .credits .note{flex:1 1 240px;color:var(--muted);font-size:.82rem;line-height:1.5;
+                 border-left:3px solid var(--accent);padding-left:12px}
+  .credits .members{font-weight:500;color:var(--muted);font-style:italic}
+</style>
+</head>
+<body>
+
+<!-- ================= FRANJA INSTITUCIONAL ================= -->
+<!-- Requiere, en esta MISMA carpeta: UNMSM_coatofarms_seal.gif  y  Logo-fisi-header-240x105.png -->
+<div class="brandbar">
+  <div class="inner">
+
+    <!-- Escudo UNMSM dentro de medallón blanco -->
+    <span class="crest-wrap">
+      <img class="crest" src="UNMSM_coatofarms_seal.gif"
+           alt="Escudo de la Universidad Nacional Mayor de San Marcos" width="68" height="68">
+    </span>
+
+    <!-- Logo horizontal de FISI (texto blanco -> va sobre fondo oscuro) -->
+    <img class="fisi-img" src="Logo-fisi-header-240x105.png"
+         alt="Facultad de Ingeniería de Sistemas e Informática" width="240" height="105">
+
+    <span class="vsep" aria-hidden="true"></span>
+
+    <div class="txt">
+      <span class="uni">Universidad Nacional Mayor de San Marcos</span>
+      <span class="tag">Real Universidad · Decana de América (1551)</span>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="group">
+      <span class="g-name">Grupo Trikeros</span>
+      <span class="g-sub">Química · Exposición de la Semana 4</span>
+    </div>
+
+  </div>
+</div>
+
+<header>
+  <h1>Tabla periódica interactiva</h1>
+  <p>Escribe un <strong>número atómico</strong> (1–118) o pulsa cualquier elemento: la tabla marca su casilla, resalta su <strong>período</strong> (fila) y su <strong>grupo</strong> (columna) y muestra su posición exacta.</p>
+</header>
+
+<div class="controls">
+  <div class="field">
+    <label for="zn">Nº atómico</label>
+    <input id="zn" type="number" min="1" max="118" step="1" inputmode="numeric" placeholder="Z" aria-label="Número atómico">
+  </div>
+  <button id="rand" type="button">🎲 Aleatorio</button>
+  <button id="clear" type="button">✕ Limpiar</button>
+  <div class="chips" id="chips"></div>
+  <div class="warn" id="warn" role="status"></div>
+</div>
+
+<div class="info">
+  <div class="card" id="card">
+    <div class="empty">Selecciona un elemento para ver su posición en la tabla.</div>
+  </div>
+</div>
+
+<div class="legend" id="legend"></div>
+
+<div class="tablewrap">
+  <div class="ptable" id="ptable" role="grid" aria-label="Tabla periódica"></div>
+</div>
+
+<!-- ================= PIE DE PÁGINA / CRÉDITOS ================= -->
+<footer class="credits">
+  <div class="box">
+    <div class="col">
+      <span class="k">Presentado por</span>
+      <span class="v big">Grupo Trikeros</span>
+    </div>
+    <div class="col">
+      <span class="k">Curso</span>
+      <span class="v">Química</span>
+    </div>
+    <div class="col">
+      <span class="k">Actividad</span>
+      <span class="v">Exposición · Semana 4</span>
+    </div>
+    <div class="col">
+      <span class="k">Tema</span>
+      <span class="v">Tipos de enlace químico</span>
+    </div>
+    <div class="col">
+      <span class="k">Facultad</span>
+      <span class="v">FISI — UNMSM</span>
+    </div>
+    <div class="note">
+      Recurso interactivo de apoyo a la exposición. Los átomos se unen para alcanzar configuraciones electrónicas estables; según cómo se transfieran, se compartan o se liberen los electrones de valencia, se forman los enlaces <strong>iónico</strong>, <strong>covalente</strong> y <strong>metálico</strong>.
+      <br><span class="members">Integrantes: ____________________________</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ===== Datos: [Z, símbolo, nombre, categoría, fila, columna] ===== */
+const DATA = [
+[1,"H","Hidrógeno","n",1,1],[2,"He","Helio","g",1,18],
+[3,"Li","Litio","a",2,1],[4,"Be","Berilio","e",2,2],[5,"B","Boro","m",2,13],[6,"C","Carbono","n",2,14],[7,"N","Nitrógeno","n",2,15],[8,"O","Oxígeno","n",2,16],[9,"F","Flúor","h",2,17],[10,"Ne","Neón","g",2,18],
+[11,"Na","Sodio","a",3,1],[12,"Mg","Magnesio","e",3,2],[13,"Al","Aluminio","p",3,13],[14,"Si","Silicio","m",3,14],[15,"P","Fósforo","n",3,15],[16,"S","Azufre","n",3,16],[17,"Cl","Cloro","h",3,17],[18,"Ar","Argón","g",3,18],
+[19,"K","Potasio","a",4,1],[20,"Ca","Calcio","e",4,2],[21,"Sc","Escandio","t",4,3],[22,"Ti","Titanio","t",4,4],[23,"V","Vanadio","t",4,5],[24,"Cr","Cromo","t",4,6],[25,"Mn","Manganeso","t",4,7],[26,"Fe","Hierro","t",4,8],[27,"Co","Cobalto","t",4,9],[28,"Ni","Níquel","t",4,10],[29,"Cu","Cobre","t",4,11],[30,"Zn","Zinc","t",4,12],[31,"Ga","Galio","p",4,13],[32,"Ge","Germanio","m",4,14],[33,"As","Arsénico","m",4,15],[34,"Se","Selenio","n",4,16],[35,"Br","Bromo","h",4,17],[36,"Kr","Kriptón","g",4,18],
+[37,"Rb","Rubidio","a",5,1],[38,"Sr","Estroncio","e",5,2],[39,"Y","Itrio","t",5,3],[40,"Zr","Circonio","t",5,4],[41,"Nb","Niobio","t",5,5],[42,"Mo","Molibdeno","t",5,6],[43,"Tc","Tecnecio","t",5,7],[44,"Ru","Rutenio","t",5,8],[45,"Rh","Rodio","t",5,9],[46,"Pd","Paladio","t",5,10],[47,"Ag","Plata","t",5,11],[48,"Cd","Cadmio","t",5,12],[49,"In","Indio","p",5,13],[50,"Sn","Estaño","p",5,14],[51,"Sb","Antimonio","m",5,15],[52,"Te","Telurio","m",5,16],[53,"I","Yodo","h",5,17],[54,"Xe","Xenón","g",5,18],
+[55,"Cs","Cesio","a",6,1],[56,"Ba","Bario","e",6,2],[72,"Hf","Hafnio","t",6,4],[73,"Ta","Tantalio","t",6,5],[74,"W","Wolframio","t",6,6],[75,"Re","Renio","t",6,7],[76,"Os","Osmio","t",6,8],[77,"Ir","Iridio","t",6,9],[78,"Pt","Platino","t",6,10],[79,"Au","Oro","t",6,11],[80,"Hg","Mercurio","t",6,12],[81,"Tl","Talio","p",6,13],[82,"Pb","Plomo","p",6,14],[83,"Bi","Bismuto","p",6,15],[84,"Po","Polonio","p",6,16],[85,"At","Astato","h",6,17],[86,"Rn","Radón","g",6,18],
+[87,"Fr","Francio","a",7,1],[88,"Ra","Radio","e",7,2],[104,"Rf","Rutherfordio","t",7,4],[105,"Db","Dubnio","t",7,5],[106,"Sg","Seaborgio","t",7,6],[107,"Bh","Bohrio","t",7,7],[108,"Hs","Hasio","t",7,8],[109,"Mt","Meitnerio","t",7,9],[110,"Ds","Darmstatio","t",7,10],[111,"Rg","Roentgenio","t",7,11],[112,"Cn","Copernicio","t",7,12],[113,"Nh","Nihonio","p",7,13],[114,"Fl","Flerovio","p",7,14],[115,"Mc","Moscovio","p",7,15],[116,"Lv","Livermorio","p",7,16],[117,"Ts","Teneso","h",7,17],[118,"Og","Oganesón","g",7,18],
+[57,"La","Lantano","l",9,3],[58,"Ce","Cerio","l",9,4],[59,"Pr","Praseodimio","l",9,5],[60,"Nd","Neodimio","l",9,6],[61,"Pm","Prometio","l",9,7],[62,"Sm","Samario","l",9,8],[63,"Eu","Europio","l",9,9],[64,"Gd","Gadolinio","l",9,10],[65,"Tb","Terbio","l",9,11],[66,"Dy","Disprosio","l",9,12],[67,"Ho","Holmio","l",9,13],[68,"Er","Erbio","l",9,14],[69,"Tm","Tulio","l",9,15],[70,"Yb","Iterbio","l",9,16],[71,"Lu","Lutecio","l",9,17],
+[89,"Ac","Actinio","c",10,3],[90,"Th","Torio","c",10,4],[91,"Pa","Protactinio","c",10,5],[92,"U","Uranio","c",10,6],[93,"Np","Neptunio","c",10,7],[94,"Pu","Plutonio","c",10,8],[95,"Am","Americio","c",10,9],[96,"Cm","Curio","c",10,10],[97,"Bk","Berkelio","c",10,11],[98,"Cf","Californio","c",10,12],[99,"Es","Einstenio","c",10,13],[100,"Fm","Fermio","c",10,14],[101,"Md","Mendelevio","c",10,15],[102,"No","Nobelio","c",10,16],[103,"Lr","Laurencio","c",10,17]
+];
+
+const CATS = {
+  a:["Metales alcalinos","--a"], e:["Alcalinotéreos","--e"], t:["Metales de transición","--t"],
+  p:["Otros metales","--p"], m:["Metaloides","--m"], n:["No metales","--n"],
+  h:["Halógenos","--h"], g:["Gases nobles","--g"], l:["Lantánidos","--l"], c:["Actínidos","--c"]
+};
+const periodOf = z => z<=2?1:z<=10?2:z<=18?3:z<=36?4:z<=54?5:z<=86?6:7;
+const groupOf  = (cat,col) => (cat==="l"||cat==="c") ? null : col;
+
+const grid = document.getElementById("ptable");
+const cellsByZ = {};
+
+for(let g=1; g<=18; g++){
+  const d=document.createElement("div"); d.className="axis"; d.textContent=g;
+  d.style.gridColumn=g+1; d.style.gridRow=1; grid.appendChild(d);
+}
+for(let p=1; p<=7; p++){
+  const d=document.createElement("div"); d.className="axis"; d.textContent=p;
+  d.style.gridColumn=1; d.style.gridRow=p+1; grid.appendChild(d);
+}
+[[9,"6"],[10,"7"]].forEach(([r,t])=>{
+  const d=document.createElement("div"); d.className="axis f"; d.textContent=t+"*";
+  d.style.gridColumn=1; d.style.gridRow=r+1; grid.appendChild(d);
+});
+[[6,3,"57–71"],[7,3,"89–103"]].forEach(([r,c,t])=>{
+  const d=document.createElement("div"); d.className="marker"; d.textContent=t;
+  d.dataset.r=r+1; d.dataset.c=c+1; d.style.gridColumn=c+1; d.style.gridRow=r+1; grid.appendChild(d);
+});
+DATA.forEach(([z,sym,name,cat,r,c])=>{
+  const b=document.createElement("button");
+  b.type="button"; b.className="cell cat-"+cat;
+  b.dataset.z=z; b.dataset.r=r+1; b.dataset.c=c+1;
+  b.setAttribute("aria-label",`${name}, número atómico ${z}`);
+  b.innerHTML=`<span class="z">${z}</span><span class="s">${sym}</span><span class="n">${name}</span>`;
+  b.style.gridColumn=c+1; b.style.gridRow=r+1;
+  b.addEventListener("click",()=>{ input.value=z; select(z); });
+  grid.appendChild(b); cellsByZ[z]=b;
+});
+
+const legend=document.getElementById("legend");
+Object.values(CATS).forEach(([label,varName])=>{
+  const sp=document.createElement("span");
+  sp.innerHTML=`<i style="background:var(${varName}-bg);border-color:var(${varName}-bd)"></i>${label}`;
+  legend.appendChild(sp);
+});
+
+const chipsBox=document.getElementById("chips");
+[1,8,26,79,92,118].forEach(z=>{
+  const el=DATA.find(d=>d[0]===z);
+  const b=document.createElement("button"); b.className="chip"; b.type="button";
+  b.textContent=`${el[1]} · ${z}`;
+  b.addEventListener("click",()=>{ input.value=z; select(z); });
+  chipsBox.appendChild(b);
+});
+
+const input=document.getElementById("zn");
+const warn=document.getElementById("warn");
+const card=document.getElementById("card");
+const allCells=()=>grid.querySelectorAll(".cell,.marker");
+
+function clearHL(){
+  grid.classList.remove("focused");
+  allCells().forEach(c=>c.classList.remove("sel","rowhl","colhl"));
+}
+function select(z){
+  warn.textContent="";
+  const el=DATA.find(d=>d[0]===z);
+  if(!el){
+    clearHL();
+    warn.textContent = (z===""||isNaN(z)) ? "" : "Introduce un número entre 1 y 118.";
+    card.innerHTML='<div class="empty">Valor no válido. Escribe un número atómico entre 1 y 118.</div>';
+    return;
+  }
+  const [,sym,name,cat,r,c]=el;
+  const period=periodOf(z), group=groupOf(cat,c);
+  clearHL();
+  grid.classList.add("focused");
+  const gr=r+1, gc=c+1;
+  allCells().forEach(cell=>{
+    if(cell.dataset.r==gr) cell.classList.add("rowhl");
+    if(cell.dataset.c==gc) cell.classList.add("colhl");
+  });
+  const target=cellsByZ[z];
+  target.classList.add("sel");
+  target.scrollIntoView({block:"center",inline:"center",behavior:"smooth"});
+
+  const [catLabel,varName]=CATS[cat];
+  const posText = group
+    ? `Período <b>${period}</b> · Grupo <b>${group}</b> · Columna ${c}, fila ${r}`
+    : `Período <b>${period}</b> · Bloque <b>f</b> (lantánidos/actínidos)`;
+  card.innerHTML=`
+    <div class="sym cat-${cat}" style="border-color:var(${varName}-bd);background:var(${varName}-bg);color:var(${varName}-tx)">
+      <small>${z}</small><b>${sym}</b>
+    </div>
+    <div class="meta">
+      <h2>${name}</h2>
+      <p class="pos">Posición en la tabla → ${posText}</p>
+      <span class="badge" style="background:var(${varName}-bg);border-color:var(${varName}-bd);color:var(${varName}-tx)">
+        <i style="background:var(${varName}-bd)"></i>${catLabel}
+      </span>
+    </div>`;
+}
+
+input.addEventListener("input",e=>{
+  const v=e.target.value.trim();
+  if(v===""){ clearHL(); warn.textContent="";
+    card.innerHTML='<div class="empty">Selecciona un elemento para ver su posición en la tabla.</div>'; return; }
+  select(parseInt(v,10));
+});
+input.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); select(parseInt(input.value,10)); }});
+document.getElementById("clear").addEventListener("click",()=>{ input.value=""; input.dispatchEvent(new Event("input")); input.focus(); });
+document.getElementById("rand").addEventListener("click",()=>{
+  const z=1+Math.floor(Math.random()*118); input.value=z; select(z);
+});
+</script>
+</body>
+</html>
